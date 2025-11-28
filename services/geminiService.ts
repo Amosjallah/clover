@@ -1,10 +1,12 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { CreativeConceptResponse } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export const generateCreativeConcept = async (userIdea: string): Promise<CreativeConceptResponse | null> => {
   try {
+    // Initialize the client strictly inside the function to avoid top-level 'process is not defined' crashes
+    const apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : '';
+    const ai = new GoogleGenAI({ apiKey });
+
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: `The user wants to book a creative session (photography, video, or design) or buy custom clothes. 
